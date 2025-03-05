@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilder hochladen</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ladet hier eure Bilder hoch</h1>
+        <input type="file" id="fileInput" multiple>
+        <button onclick="uploadFiles()">Bilder hochladen</button>
+        <div id="imageContainer"></div>
+    </div>
 
+    <script>
+        function uploadFiles() {
+            const input = document.getElementById('fileInput');
+            const files = input.files;
+            const formData = new FormData();
+
+            if (files.length === 0) {
+                alert("Bitte wähle eine Datei aus!");
+                return;
+            }
+
+            for (let i = 0; i < files.length; i++) {
+                formData.append('images', files[i]);
+            }
+
+            console.log("📤 Sende Dateien an den Server...");
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Server-Antwort:", data);
+
+                if (data.filePaths) {
+                    const imageContainer = document.getElementById('imageContainer');
+                    imageContainer.innerHTML = ''; // Vorherige Bilder löschen
+
+                    data.filePaths.forEach(filePath => {
+                        const img = document.createElement('img');
+                        img.src = filePath;
+                        img.style.maxWidth = '200px';
+                        img.style.margin = '10px';
+                        imageContainer.appendChild(img);
+                    });
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error("❌ Fehler beim Hochladen:", error);
+                alert("Fehler beim Hochladen! Siehe Konsole.");
+            });
+        }
+    </script>
+</body>
+</html>
