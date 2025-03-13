@@ -15,6 +15,8 @@
     </div>
 
     <script>
+        const SERVER_URL = "https://DEIN-RENDER-SERVER.onrender.com"; // Hier deine Render-URL einfügen!
+
         function uploadFiles() {
             const input = document.getElementById('fileInput');
             const files = input.files;
@@ -31,7 +33,7 @@
 
             console.log("📤 Sende Dateien an den Server...");
 
-            fetch('/upload', {
+            fetch(`${SERVER_URL}/upload`, {  // Hier SERVER_URL benutzen
                 method: 'POST',
                 body: formData
             })
@@ -45,7 +47,7 @@
 
                     data.filePaths.forEach(filePath => {
                         const img = document.createElement('img');
-                        img.src = filePath;
+                        img.src = `${SERVER_URL}${filePath}`;  // Pfad mit Server-URL kombinieren
                         img.style.maxWidth = '200px';
                         img.style.margin = '10px';
                         imageContainer.appendChild(img);
